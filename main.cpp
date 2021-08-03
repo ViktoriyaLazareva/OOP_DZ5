@@ -1,135 +1,84 @@
 #include <iostream>
-#include <vector>
+
 using namespace std;
 
-class Card {
-public:
-    enum rank {ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
-    enum suit {CLUBS, DIAMONDS, HEARTS, SPADES};
-
-    Card(rank r = ACE, suit s = SPADES, bool ifu = true);
-    int GetValue() const;
-    void Flip();
-
+//Task 1.1------------------------------------------------------
+template <class T>
+class Pair1 {
 private:
-    rank m_Rank;
-    suit m_Suit;
-    bool m_IsFaceUp;
-};
+    T t_1;
+    T t_2;
 
-Card::Card(rank r, suit s, bool ifu) : m_Rank(r), m_Suit(s), m_IsFaceUp(ifu)
-{}
-
-int Card::GetValue() const {
-    int value = 0;
-    if (m_IsFaceUp) {
-        value = m_Rank;
-        if (value > 10) {
-            value = 10;
-        }
-    }
-    return value;
-}
-
-void Card::Flip() {
-    m_IsFaceUp = !(m_IsFaceUp);
-}
-
-
-class Hand {
-protected:
-    vector<Card*> m_Cards;
 public:
-    Hand();
-    virtual ~Hand(); // виртуальный деструктор
-    void Clear(); // добавляет карту в руку очищает руку от карт
-    int GetTotal() const; //получает сумму очков карт в руке, присваивая тузу значение 1 или 11 в зависимости от ситуации
-    void addCard(Card* pCard) {
-    m_Cards.push_back(pCard);
+    Pair1(T x, T y) {
+   t_1 = x;
+   t_2 = y;
+    }
+
+T first() const {
+return t_1;
+    }
+
+T second() const {
+return t_2;
+    }
+};
+
+//Task 2.1------------------------------------------------------
+template <class D1, class D2>
+class Pair {
+private:
+    D1 d_1;
+    D2 d_2;
+
+public:
+    Pair(D1 x, D2 y) {
+    d_1 = x;
+    d_2 = y;
+    }
+
+D1 first() const {
+    return d_1;
+}
+
+D2 second() const {
+    return d_2;
 }
 
 };
 
-Hand::Hand()
-{
-    m_Cards.reserve(7);
-}
-Hand::~Hand()//деструктор по-прежнему виртуальный это уже можно не обозначать
-{
-    Clear();
-}
-
-void Hand::Clear() {
-    vector<Card*>::iterator iter = m_Cards.begin();// проходит по вектору, освобождая всю память в куче
-    for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter) {
-        delete *iter;
-        *iter = 0;
+//Task 3.1------------------------------------------------------
+template <class F>
+class StringValuePair : public Pair<string, F> {
+public:
+StringValuePair(string x, F y) : Pair<string, F>(x, y) {
     }
-    m_Cards.clear();// очищает вектор указателей
-}
-
-int Hand::GetTotal() const {
-    if (m_Cards.empty()) {
-        return 0;// если карт в руке нет, возвращает значение 0
-    } //если первая карта имеет значение 0, то она лежит рубашкой вверх: вернуть значение 0
-    if (m_Cards[0]->GetValue() == 0) {
-        return 0;
-    } // находит сумму очков всех карт, каждый туз дает 1 очко
-    int total = 0;
-    vector<Card*>::const_iterator iter;
-    for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter) {
-        total += (*iter)->GetValue();
-    } // определяет, держит ли рука туз
-    bool containsAce = false;
-    for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter) {
-        if ((*iter)->GetValue() == Card::ACE)
-        {
-            containsAce = true;
-        }
-    }
-    if (containsAce && total <= 11) { // если рука держит туз и сумма довольно маленькая, туз дает 11 очков
-        total += 10;//добавляем только 10 очков, поскольку мы уже добавили за каждый туз по одному очку
-    }
-
-    return total;
-}
-
-
-
-
-
+};
 
 
 int main()
 {
-cout << "\t\tWelcome to Blackjack!\n\n";
 
-    int numPlayers = 0;
-    while (numPlayers < 1 || numPlayers > 7)
-    {
-        cout << "How many players? (1 - 7): ";
-        cin >> numPlayers;
-    }
+//Task 1.2------------------------------------------------------
+    Pair1<int> p1(6, 9);
+    cout << "Pair: " << p1.first() << ' ' << p1.second() << '\n';
 
-    vector<string> names;
-    string name;
-    for (int i = 0; i < numPlayers; ++i)
-    {
-        cout << "Enter player name: ";
-        cin >> name;
-        names.push_back(name);
-    }
+    const Pair1<double> p2(3.4, 7.8);
+    cout << "Pair: " << p2.first() << ' ' << p2.second() << '\n';
     cout << endl;
 
-    // игровой цикл
-  /*  Game aGame(names);
-    char again = 'y';
-    while (again != 'n' && again != 'N')
-    {
-        aGame.Play();
-        cout << "\nDo you want to play again? (Y/N): ";
-        cin >> again;
-    }*/
+//Task 2.2------------------------------------------------------
+    Pair<int, double> p(6, 7.8);
+    cout << "Pair: " << p.first() << ' ' << p.second() << '\n';
+
+    const Pair<double, int> p3(3.4, 5);
+    cout << "Pair: " << p3.first() << ' ' << p3.second() << '\n';
+    cout << endl;
+
+//Task 3.2------------------------------------------------------
+    StringValuePair<int> svp("Amazing", 7);
+    cout << "Pair: " << svp.first() << ' ' << svp.second() << '\n';
+
 
     return 0;
 }
